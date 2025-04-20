@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emoji Movie Guess</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      background-color: #fffbe6;
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    select, input {
+      font-size: 1rem;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      width: 60%;
+      max-width: 300px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin: 1rem 0.5rem;
+      background-color: #ffcc00;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .emoji {
+      font-size: 3rem;
+      margin: 1.5rem 0;
+    }
+    .message {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎬 Emoji Movie Guess</h1>
+  <select id="categorySelect" onchange="loadCategory()">
+    <option value="disney">Disney</option>
+    <option value="dystopian">Dystopian</option>
+    <option value="action">Action</option>
+  </select>
+  <div class="emoji" id="emojiClue">🎥🍿</div>
+  <input type="text" id="guessInput" placeholder="Type your guess here..." />
+  <br />
+  <button onclick="checkGuess()">Guess</button>
+  <button onclick="nextPuzzle()">Next</button>
+  <div class="message" id="message"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const categories = {
+      disney: [
+        { emoji: "🦁👑", answer: "the lion king" },
+        { emoji: "🧞‍♂️🕌", answer: "aladdin" },
+        { emoji: "👸🏻🍎", answer: "snow white" },
+        { emoji: "🐘🎪", answer: "dumbo" },
+        { emoji: "👠🎃🕛", answer: "cinderella" },
+        { emoji: "🐻🍯", answer: "winnie the pooh" },
+        { emoji: "🐟🔍", answer: "finding nemo" },
+        { emoji: "❄️👭", answer: "frozen" },
+        { emoji: "👨‍🍳🐭", answer: "ratatouille" },
+        { emoji: "🎈🏠👴", answer: "up" },
+        { emoji: "🕷️🧑", answer: "spiderman" },
+        { emoji: "🧙‍♀️🧹🐈", answer: "hocus pocus" },
+        { emoji: "🚗🏁", answer: "cars" },
+      ],
+      dystopian: [
+        { emoji: "🏹🔥🕊️", answer: "the hunger games" },
+        { emoji: "🧥👧🐷", answer: "animal farm" },
+        { emoji: "🕶️💊🔌", answer: "the matrix" },
+        { emoji: "🐵🚀🌍", answer: "planet of the apes" },
+        { emoji: "🧬👶🧪", answer: "gattaca" },
+        { emoji: "👁️📹", answer: "1984" },
+        { emoji: "🧑‍🚀🌌🛰️", answer: "interstellar" },
+        { emoji: "🦾🌇", answer: "terminator" },
+        { emoji: "🧬💉🏙️", answer: "divergent" },
+        { emoji: "🏃‍♂️🧪🧱", answer: "the maze runner" },
+      ],
+      action: [
+        { emoji: "🧔🔫", answer: "john wick" },
+        { emoji: "🕵️‍♂️💼", answer: "mission impossible" },
+        { emoji: "🧨🚗💣", answer: "fast and furious" },
+        { emoji: "🦸‍♂️🛡️", answer: "captain america" },
+        { emoji: "🦸‍♀️💪", answer: "wonder woman" },
+        { emoji: "🕷️🧑", answer: "spiderman" },
+        { emoji: "🦇🏙️", answer: "batman" },
+        { emoji: "🇺🇸🦅🔫", answer: "american sniper" },
+        { emoji: "🌆🏃💣", answer: "die hard" },
+        { emoji: "🕶️💼💥", answer: "men in black" },
+        { emoji: "🦸‍♂️⚡", answer: "shazam" },
+        { emoji: "🦍🗽🏙️", answer: "king kong" }
+      ]
+    };
+
+    let currentCategory = 'disney';
+    let remainingPuzzles = [];
+    let currentPuzzle;
+
+    function loadCategory() {
+      currentCategory = document.getElementById("categorySelect").value;
+      remainingPuzzles = [...categories[currentCategory]];
+      nextPuzzle();
+    }
+
+    function getRandomPuzzle() {
+      if (remainingPuzzles.length === 0) {
+        remainingPuzzles = [...categories[currentCategory]];
+      }
+      const index = Math.floor(Math.random() * remainingPuzzles.length);
+      currentPuzzle = remainingPuzzles.splice(index, 1)[0];
+      document.getElementById("emojiClue").innerText = currentPuzzle.emoji;
+      document.getElementById("guessInput").value = "";
+      document.getElementById("message").innerText = "";
+    }
+
+    function checkGuess() {
+      const guess = document.getElementById("guessInput").value.trim().toLowerCase();
+      const message = document.getElementById("message");
+      if (guess === currentPuzzle.answer) {
+        message.innerText = "✅ Correct!";
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+      } else {
+        message.innerText = "❌ Nope, try again!";
+      }
+    }
+
+    function nextPuzzle() {
+      getRandomPuzzle();
+    }
+
+    loadCategory();
+  </script>
+</body>
+</html>
